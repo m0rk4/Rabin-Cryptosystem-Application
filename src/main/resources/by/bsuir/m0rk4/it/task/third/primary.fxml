@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="516.0" prefWidth="600.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="by.bsuir.m0rk4.it.task.third.controller.PrimaryController">
+    <bottom>
+        <HBox prefHeight="20.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+    </bottom>
+    <top>
+        <ToolBar prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <items>
+                <Button mnemonicParsing="false" text="Button" />
+            </items>
+        </ToolBar>
+    </top>
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="p:">
+                                    <font>
+                                        <Font name="Times New Roman Bold Italic" size="20.0" />
+                                    </font>
+                                </Label>
+                                <TextArea fx:id="pTArea" prefHeight="200.0" prefWidth="200.0" wrapText="true">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font></TextArea>
+                                <StackPane fx:id="pPrimeBackgrondPane">
+                                    <children>
+                                        <Label fx:id="pStatusLabel">
+                                            <font>
+                                                <Font name="Times New Roman" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="q:">
+                                    <font>
+                                        <Font name="Times New Roman Bold Italic" size="20.0" />
+                                    </font>
+                                </Label>
+                                <TextArea fx:id="qTArea" prefHeight="200.0" prefWidth="200.0" wrapText="true">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font></TextArea>
+                                <StackPane fx:id="qPrimeBackgrondPane">
+                                    <children>
+                                        <Label fx:id="qStatusLabel">
+                                            <font>
+                                                <Font name="Times New Roman" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="b:">
+                                    <font>
+                                        <Font name="Times New Roman Bold Italic" size="20.0" />
+                                    </font>
+                                </Label>
+                                <TextArea fx:id="bTArea" prefHeight="200.0" prefWidth="200.0" wrapText="true">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font></TextArea>
+                                <StackPane fx:id="bPrimeBackgrondPane">
+                                    <children>
+                                        <Label fx:id="bStatusLabel">
+                                            <font>
+                                                <Font name="Times New Roman" size="14.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </HBox>
+                <VBox alignment="CENTER" prefHeight="120.0" prefWidth="600.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <Label text="n ( = p * q):">
+                            <font>
+                                <Font name="Times New Roman Bold Italic" size="20.0" />
+                            </font>
+                        </Label>
+                        <TextArea fx:id="nTArea" editable="false" prefHeight="200.0" prefWidth="579.0" wrapText="true">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font></TextArea>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+                <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="Select File:">
+                                    <font>
+                                        <Font name="Times New Roman Bold Italic" size="20.0" />
+                                    </font>
+                                </Label>
+                        <HBox alignment="CENTER" spacing="5.0">
+                           <children>
+                                      <Button fx:id="fileUploadButton" mnemonicParsing="false" text="File">
+                                          <font>
+                                              <Font name="Times New Roman Bold" size="16.0" />
+                                          </font>
+                                      </Button>
+                              <Button fx:id="cancelFileButton" mnemonicParsing="false" text="Cancel">
+                                 <font>
+                                    <Font name="Times New Roman Bold" size="16.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Label fx:id="filenameLabel" text="Filename:">
+                           <font>
+                              <Font name="Times New Roman Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="blockSizeLabel" text="Block Size:">
+                           <font>
+                              <Font name="Times New Roman Bold" size="14.0" />
+                           </font>
+                        </Label>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Button fx:id="encryptButton" mnemonicParsing="false" text="Encrypt">
+                                    <font>
+                                        <Font name="Times New Roman Bold" size="16.0" />
+                                    </font>
+                                </Button>
+                                <Button fx:id="decryptButton" mnemonicParsing="false" text="Decrypt">
+                                    <font>
+                                        <Font name="Times New Roman Bold" size="16.0" />
+                                    </font>
+                                </Button>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="Decimal result:">
+                                    <font>
+                                        <Font name="Times New Roman Bold Italic" size="20.0" />
+                                    </font>
+                                </Label>
+                                <TextArea fx:id="resultTArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font></TextArea>
+                            </children>
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </padding>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
