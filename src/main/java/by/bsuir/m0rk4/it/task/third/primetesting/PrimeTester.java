@@ -43,7 +43,6 @@ public class PrimeTester {
     }
 
     private boolean passesMillerRabin(BigInteger value, int iterations) {
-        // Find a and m such that m is odd and this == 1 + 2**a * m
         BigInteger thisMinusOne = value.subtract(ONE);
         BigInteger m = thisMinusOne;
         int a = m.getLowestSetBit();
