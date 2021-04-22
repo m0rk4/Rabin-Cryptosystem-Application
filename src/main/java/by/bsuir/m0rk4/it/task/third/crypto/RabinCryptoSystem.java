@@ -163,7 +163,7 @@ public class RabinCryptoSystem {
                     boolean isLastBlock;
                     // process file contents
                     byte[] encryptedMessageHolder = new byte[readBlockSize];
-                    while ((bytesRead = inputChannel.read(BUFFER_INPUT)) > 0) {
+                    while (inputChannel.read(BUFFER_INPUT) > 0) {
                         BUFFER_INPUT.flip();
                         while (BUFFER_INPUT.limit() - BUFFER_INPUT.position() >= readBlockSize) {
 
@@ -250,8 +250,8 @@ public class RabinCryptoSystem {
 
         BigInteger pPow = p.add(ONE).divide(FOUR);
         BigInteger qPow = q.add(ONE).divide(FOUR);
-        BigInteger mP = discriminant.modPow(pPow, p);
-        BigInteger mQ = discriminant.modPow(qPow, q);
+        BigInteger mP = binPow(discriminant, pPow, p);
+        BigInteger mQ = binPow(discriminant, qPow, q);
 
         BigInteger mPNeg = mP.negate();
         BigInteger mQNeg = mQ.negate();

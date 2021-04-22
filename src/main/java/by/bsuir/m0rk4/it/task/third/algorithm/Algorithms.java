@@ -14,6 +14,19 @@ public class Algorithms {
     public static final BigInteger FIVE = BigInteger.valueOf(5);
     public static final BigInteger EIGHT = BigInteger.valueOf(8);
 
+    public static BigInteger binPow(BigInteger base, BigInteger exp, BigInteger mod) {
+        BigInteger result = ONE;
+        while (!exp.equals(ZERO)) {
+            while (exp.mod(TWO).equals(ZERO)) {
+                exp = exp.shiftRight(1);
+                base = base.multiply(base).mod(mod);
+            }
+            exp = exp.subtract(ONE);
+            result = result.multiply(base).mod(mod);
+        }
+        return result;
+    }
+
     public static BigInteger getJacobi(BigInteger a, BigInteger n) {
         a = a.mod(n);
         BigInteger t = ONE;

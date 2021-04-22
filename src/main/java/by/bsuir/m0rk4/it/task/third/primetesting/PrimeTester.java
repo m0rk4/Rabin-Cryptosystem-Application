@@ -1,5 +1,7 @@
 package by.bsuir.m0rk4.it.task.third.primetesting;
 
+import by.bsuir.m0rk4.it.task.third.algorithm.Algorithms;
+
 import java.math.BigInteger;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -13,7 +15,7 @@ public class PrimeTester {
         if (!value.testBit(0) || value.equals(ONE))
             return false;
 
-        int rounds = 0;
+        int rounds;
         int n = (Math.min(certainty, Integer.MAX_VALUE - 1) + 1) / 2;
 
         // The relationship between the certainty and the number of rounds
@@ -58,11 +60,11 @@ public class PrimeTester {
             } while (b.compareTo(ONE) <= 0 || b.compareTo(value) >= 0);
 
             int j = 0;
-            BigInteger z = b.modPow(m, value);
+            BigInteger z = Algorithms.binPow(b, m, value);
             while (!((j == 0 && z.equals(ONE)) || z.equals(thisMinusOne))) {
                 if (j > 0 && z.equals(ONE) || ++j == a)
                     return false;
-                z = z.modPow(TWO, value);
+                z = binPow(z, TWO, value);
             }
         }
         return true;
