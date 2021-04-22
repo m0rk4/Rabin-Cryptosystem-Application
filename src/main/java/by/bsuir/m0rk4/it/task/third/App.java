@@ -1,6 +1,7 @@
 package by.bsuir.m0rk4.it.task.third;
 
 import by.bsuir.m0rk4.it.task.third.controller.PrimaryController;
+import by.bsuir.m0rk4.it.task.third.crypto.RabinCryptoSystem;
 import by.bsuir.m0rk4.it.task.third.primetesting.PrimeTester;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,9 +22,11 @@ public class App extends Application {
         URL appViewUrl = App.class.getResource(VIEW_NAME);
         FXMLLoader fxmlLoader = new FXMLLoader(appViewUrl);
 
+        RabinCryptoSystem rabinCryptoSystem = new RabinCryptoSystem();
         PrimeTester primeTester = new PrimeTester();
-        PrimaryController primaryController = new PrimaryController(primeTester);
+        PrimaryController primaryController = new PrimaryController(primeTester, rabinCryptoSystem);
         fxmlLoader.setControllerFactory(c -> primaryController);
+
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         stage.setScene(scene);

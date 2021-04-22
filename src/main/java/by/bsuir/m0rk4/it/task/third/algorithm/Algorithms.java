@@ -17,34 +17,33 @@ public class Algorithms {
     public static BigInteger getJacobi(BigInteger a, BigInteger n) {
         a = a.mod(n);
         BigInteger t = ONE;
-        while (a.compareTo(ZERO) != 0) {
-            while (a.mod(TWO).compareTo(ZERO) == 0) {
+        while (!a.equals(ZERO)) {
+            while (a.mod(TWO).equals(ZERO)) {
                 a = a.divide(TWO);
                 BigInteger r = n.mod(EIGHT);
-                if (r.compareTo(THREE) == 0 || r.compareTo(FIVE) == 0) {
+                if (r.equals(THREE) || r.equals(FIVE)) {
                     t = t.negate();
                 }
             }
-            BigInteger tmp = n.add(ZERO);
-            n = a.add(ZERO);
-            a = tmp.add(ZERO);
-            if (n.mod(FOUR).compareTo(THREE) == 0 && a.mod(FOUR).compareTo(THREE) == 0) {
+            BigInteger tmp = n;
+            n = a;
+            a = tmp;
+            if (n.mod(FOUR).equals(THREE) && a.mod(FOUR).equals(THREE)) {
                 t = t.negate();
             }
             a = a.mod(n);
         }
-        if (n.compareTo(ONE) == 0) {
+        if (n.equals(ONE)) {
             return t;
-        } else {
-            return ZERO;
         }
+        return ZERO;
     }
 
     public static BigInteger extEuclid(BigInteger p, BigInteger q, BigIntegerRef yPRef, BigIntegerRef yQRef) {
-        if (p.compareTo(ZERO) == 0) {
+        if (p.equals(ZERO)) {
             yPRef.setVal(ZERO);
             yQRef.setVal(ONE);
-            return BigInteger.ONE;
+            return ONE;
         }
         BigIntegerRef yP1Ref = new BigIntegerRef();
         BigIntegerRef yQ1Ref = new BigIntegerRef();

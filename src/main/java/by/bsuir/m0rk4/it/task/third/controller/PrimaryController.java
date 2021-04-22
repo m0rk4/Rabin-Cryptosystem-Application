@@ -7,11 +7,9 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -40,16 +38,19 @@ public class PrimaryController {
     public Button encryptButton;
     public Button decryptButton;
 
-    public TextArea resultTArea;
     public Label filenameLabel;
     public Label blockSizeLabel;
     public Button cancelFileButton;
+    public VBox resultContainer;
 
-    public PrimaryController(PrimeTester primeTester) {
+    public PrimaryController(PrimeTester primeTester, RabinCryptoSystem rabinCryptoSystem) {
         this.primeTester = primeTester;
+        this.rabinCryptoSystem = rabinCryptoSystem;
     }
 
-    private PrimeTester primeTester;
+
+    private final RabinCryptoSystem rabinCryptoSystem;
+    private final PrimeTester primeTester;
     private File fileInput;
 
     @FXML
@@ -95,8 +96,8 @@ public class PrimaryController {
 
         BigInteger p = new BigInteger(pTAreaText);
         BigInteger q = new BigInteger(qTAreaText);
-        boolean pTest = primeTester.test(p);
-        boolean qTest = primeTester.test(q);
+        boolean pTest = primeTester.test(p, 10);
+        boolean qTest = primeTester.test(q, 10);
         if (!pTest || !qTest) {
             showAlert("Prime test failed",
                     (!pTest ? "p failed prime test.\n" : "") +
@@ -114,8 +115,11 @@ public class PrimaryController {
             );
             return;
         }
-
         BigInteger n = p.multiply(q);
+        if (n.compareTo(BigInteger.valueOf(255)) != 1) {
+            showAlert("N range", "Impossible to get unique message!\nCrypto-level is low!");
+            return;
+        }
         BigInteger b = new BigInteger(bTAreaText);
         if (b.compareTo(n) > -1) {
             showAlert("Out of n",
@@ -132,14 +136,14 @@ public class PrimaryController {
         Optional<File> fileSaveOpt = saveFile();
         if (fileSaveOpt.isPresent()) {
             File fileOutput = fileSaveOpt.get();
-            RabinCryptoSystem rabinCryptoSystem = new RabinCryptoSystem();
             Task<List<String>> encryptTask = rabinCryptoSystem.decrypt(this.fileInput, fileOutput, b, n, p, q);
             ProgressForm pForm = new ProgressForm();
             encryptTask.setOnSucceeded(event -> {
                 Worker<List<String>> source = event.getSource();
                 List<String> value = source.getValue();
-                String joinedNums = String.join(" ", value);
-                resultTArea.setText(joinedNums);
+
+                resultContainer.getChildren().clear();
+                value.forEach(v -> resultContainer.getChildren().add(new TextField(v)));
 
                 encryptButton.setDisable(false);
                 decryptButton.setDisable(false);
@@ -171,8 +175,8 @@ public class PrimaryController {
 
         BigInteger p = new BigInteger(pTAreaText);
         BigInteger q = new BigInteger(qTAreaText);
-        boolean pTest = primeTester.test(p);
-        boolean qTest = primeTester.test(q);
+        boolean pTest = primeTester.test(p, 10);
+        boolean qTest = primeTester.test(q, 10);
         if (!pTest || !qTest) {
             showAlert("Prime test failed",
                     (!pTest ? "p failed prime test.\n" : "") +
@@ -192,6 +196,10 @@ public class PrimaryController {
         }
 
         BigInteger n = p.multiply(q);
+        if (n.compareTo(BigInteger.valueOf(255)) != 1) {
+            showAlert("N range", "Impossible to get unique message!\nCrypto-level is low!");
+            return;
+        }
         BigInteger b = new BigInteger(bTAreaText);
         if (b.compareTo(n) > -1) {
             showAlert("Out of n",
@@ -208,14 +216,14 @@ public class PrimaryController {
         Optional<File> fileSaveOpt = saveFile();
         if (fileSaveOpt.isPresent()) {
             File fileOutput = fileSaveOpt.get();
-            RabinCryptoSystem rabinCryptoSystem = new RabinCryptoSystem();
             Task<List<String>> encryptTask = rabinCryptoSystem.encrypt(this.fileInput, fileOutput, b, n);
             ProgressForm pForm = new ProgressForm();
             encryptTask.setOnSucceeded(event -> {
                 Worker<List<String>> source = event.getSource();
                 List<String> value = source.getValue();
-                String joinedNums = String.join(" ", value);
-                resultTArea.setText(joinedNums);
+
+                resultContainer.getChildren().clear();
+                value.forEach(v -> resultContainer.getChildren().add(new TextField(v)));
 
                 encryptButton.setDisable(false);
                 decryptButton.setDisable(false);

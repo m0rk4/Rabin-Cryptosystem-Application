@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -15,13 +14,6 @@
     <bottom>
         <HBox prefHeight="20.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
     </bottom>
-    <top>
-        <ToolBar prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-            <items>
-                <Button mnemonicParsing="false" text="Button" />
-            </items>
-        </ToolBar>
-    </top>
     <center>
         <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
             <children>
@@ -100,7 +92,7 @@
                 </HBox>
                 <VBox alignment="CENTER" prefHeight="120.0" prefWidth="600.0" spacing="5.0" VBox.vgrow="ALWAYS">
                     <children>
-                        <Label text="n ( = p * q):">
+                        <Label text="n ( = p * q): ( &gt; 255 to guarantee message uniqueness)">
                             <font>
                                 <Font name="Times New Roman Bold Italic" size="20.0" />
                             </font>
@@ -169,24 +161,18 @@
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                             </padding>
                         </VBox>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
-                            <children>
-                                <Label text="Decimal result:">
-                                    <font>
-                                        <Font name="Times New Roman Bold Italic" size="20.0" />
-                                    </font>
-                                </Label>
-                                <TextArea fx:id="resultTArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true">
-                           <font>
-                              <Font name="Times New Roman" size="14.0" />
-                           </font></TextArea>
-                            </children>
-                            <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                            </padding>
-                        </VBox>
                     </children>
                 </HBox>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+               <children>
+                  <Label text="Decimal Result: (first 10 values)">
+                     <font>
+                        <Font name="Times New Roman Bold Italic" size="20.0" />
+                     </font>
+                  </Label>
+                  <VBox fx:id="resultContainer" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" />
+               </children>
+            </VBox>
             </children>
         </VBox>
     </center>
