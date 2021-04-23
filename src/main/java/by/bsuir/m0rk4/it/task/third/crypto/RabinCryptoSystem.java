@@ -1,6 +1,7 @@
 package by.bsuir.m0rk4.it.task.third.crypto;
 
 import by.bsuir.m0rk4.it.task.third.algorithm.Algorithms;
+import by.bsuir.m0rk4.it.task.third.model.ExtGcdResult;
 import javafx.concurrent.Task;
 
 import java.io.File;
@@ -253,18 +254,20 @@ public class RabinCryptoSystem {
         BigInteger mP = binPow(discriminant, pPow, p);
         BigInteger mQ = binPow(discriminant, qPow, q);
 
-        if (!(mP.multiply(mP).mod(p)).equals(discriminant.mod(p)) || !(mQ.multiply(mQ).mod(q)).equals(discriminant.mod(q))) {
+        if (!(mP.multiply(mP).mod(p)).equals(discriminant.mod(p))
+                || !(mQ.multiply(mQ).mod(q)).equals(discriminant.mod(q))) {
             System.out.println("Failed check p");
             System.exit(1);
         }
 
-        BigInteger mPNeg = mP.negate();
-        BigInteger mQNeg = mQ.negate();
+        ExtGcdResult extGcdResult = extGcd(p, q);
+        BigInteger t1 = extGcdResult.getX1().multiply(p).mod(n).multiply(mQ).mod(n);
+        BigInteger t2 = extGcdResult.getY1().multiply(q).mod(n).multiply(mP).mod(n);
 
-        BigInteger root1 = CRT(mP, mQ, p, q);
-        BigInteger root2 = CRT(mPNeg, mQ, p, q);
-        BigInteger root3 = CRT(mP, mQNeg, p, q);
-        BigInteger root4 = CRT(mPNeg, mQNeg, p, q);
+        BigInteger root1 = t1.add(t2).mod(n);
+        BigInteger root4 = n.subtract(root1);
+        BigInteger root2 = t1.subtract(t2).mod(n);
+        BigInteger root3 = n.subtract(root2);
 
         BigInteger message;
         if (jacobi == 1) {
