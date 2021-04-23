@@ -36,7 +36,7 @@ public class RabinCryptoSystem {
                         RandomAccessFile rafOutput = new RandomAccessFile(fileOutput, "rw");
                         FileChannel outputChannel = rafOutput.getChannel()
                 ) {
-                    long bytesRead = 0, totalRead = 0;
+                    long bytesRead = 0;
                     long length = fileInput.length();
                     // writing filesize
                     BUFFER_OUTPUT.putLong(length);
@@ -141,7 +141,7 @@ public class RabinCryptoSystem {
 
                 int modBytesCount = module.toByteArray().length;
                 int readBlockSize = modBytesCount + 1;
-                long bytesRead, totalRead = 0, maxToWrite = modBytesCount - 1;
+                long totalRead = 0, maxToWrite = modBytesCount - 1;
                 long length = fileInput.length();
                 List<String> numbers = new ArrayList<>(10);
                 try (
@@ -252,6 +252,11 @@ public class RabinCryptoSystem {
         BigInteger qPow = q.add(ONE).divide(FOUR);
         BigInteger mP = binPow(discriminant, pPow, p);
         BigInteger mQ = binPow(discriminant, qPow, q);
+
+        if (!(mP.multiply(mP).mod(p)).equals(discriminant.mod(p)) || !(mQ.multiply(mQ).mod(q)).equals(discriminant.mod(q))) {
+            System.out.println("Failed check p");
+            System.exit(1);
+        }
 
         BigInteger mPNeg = mP.negate();
         BigInteger mQNeg = mQ.negate();

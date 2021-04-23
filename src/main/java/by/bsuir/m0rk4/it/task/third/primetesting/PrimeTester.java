@@ -70,7 +70,6 @@ public class PrimeTester {
         return true;
     }
 
-
     public boolean testRemainderMod4(BigInteger value) {
         return value.mod(FOUR).equals(THREE);
     }

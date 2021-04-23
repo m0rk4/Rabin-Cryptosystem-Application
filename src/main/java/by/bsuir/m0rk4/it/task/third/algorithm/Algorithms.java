@@ -1,6 +1,6 @@
 package by.bsuir.m0rk4.it.task.third.algorithm;
 
-import by.bsuir.m0rk4.it.task.third.model.BigIntegerRef;
+import by.bsuir.m0rk4.it.task.third.model.ExtGcdResult;
 
 import java.math.BigInteger;
 
@@ -15,6 +15,7 @@ public class Algorithms {
     public static final BigInteger EIGHT = BigInteger.valueOf(8);
 
     public static BigInteger binPow(BigInteger base, BigInteger exp, BigInteger mod) {
+        base = base.mod(mod);
         BigInteger result = ONE;
         while (!exp.equals(ZERO)) {
             while (exp.mod(TWO).equals(ZERO)) {
@@ -52,32 +53,31 @@ public class Algorithms {
         return ZERO;
     }
 
-    public static BigInteger extEuclid(BigInteger p, BigInteger q, BigIntegerRef yPRef, BigIntegerRef yQRef) {
-        if (p.equals(ZERO)) {
-            yPRef.setVal(ZERO);
-            yQRef.setVal(ONE);
-            return ONE;
+    public static ExtGcdResult extGcd(BigInteger a, BigInteger b) {
+        BigInteger x = ZERO, y = ONE;
+        BigInteger lastX = ONE, lastY = ZERO;
+        BigInteger tmp;
+        while (!b.equals(ZERO)) {
+            BigInteger q = a.divide(b);
+            BigInteger r = a.mod(b);
+
+            a = b;
+            b = r;
+
+            tmp = x;
+            x = lastX.subtract(q.multiply(x));
+            lastX = tmp;
+
+            tmp = y;
+            y = lastY.subtract(q.multiply(y));
+            lastY = tmp;
         }
-        BigIntegerRef yP1Ref = new BigIntegerRef();
-        BigIntegerRef yQ1Ref = new BigIntegerRef();
-        BigInteger gcd = extEuclid(q.mod(p), p, yP1Ref, yQ1Ref);
-        BigInteger tmp = q.divide(p).multiply(yP1Ref.getVal());
-        yPRef.setVal(yQ1Ref.getVal().subtract(tmp));
-        yQRef.setVal(yP1Ref.getVal());
-        return gcd;
+        return new ExtGcdResult(lastX, lastY, a);
     }
 
     public static BigInteger CRT(BigInteger aP, BigInteger aQ, BigInteger p, BigInteger q) {
-        BigIntegerRef y1Inv = new BigIntegerRef();
-        BigIntegerRef ignored = new BigIntegerRef();
-        extEuclid(q, p, y1Inv, ignored);
-        BigInteger val1 = y1Inv.getVal();
-        BigInteger z1 = val1.mod(p).add(p).mod(p);
-        BigIntegerRef y2Inv = new BigIntegerRef();
-        ignored = new BigIntegerRef();
-        extEuclid(p, q, y2Inv, ignored);
-        BigInteger val2 = y2Inv.getVal();
-        BigInteger z2 = val2.mod(q).add(q).mod(q);
+        BigInteger z1 = ((extGcd(q, p).getX1().mod(p)).add(p)).mod(p);
+        BigInteger z2 = ((extGcd(p, q).getX1().mod(q)).add(q)).mod(q);
         return (aP.multiply(q).multiply(z1)).add(aQ.multiply(p).multiply(z2)).mod(p.multiply(q));
     }
 }
