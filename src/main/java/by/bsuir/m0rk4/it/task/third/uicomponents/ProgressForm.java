@@ -11,7 +11,7 @@ import javafx.stage.StageStyle;
 public class ProgressForm {
 
     private final Stage dialogStage;
-    private final ProgressIndicator pin = new ProgressIndicator();
+    private final ProgressIndicator progressIndicator;
 
     public ProgressForm() {
         dialogStage = new Stage();
@@ -20,19 +20,20 @@ public class ProgressForm {
         dialogStage.initModality(Modality.APPLICATION_MODAL);
         dialogStage.setTitle("Processing...");
 
-        pin.setMinWidth(400);
-        pin.setMinHeight(400);
-        pin.setProgress(-1F);
+        progressIndicator = new ProgressIndicator();
+        progressIndicator.setMinWidth(400);
+        progressIndicator.setMinHeight(400);
+        progressIndicator.setProgress(-1F);
 
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(pin);
+        stackPane.getChildren().add(progressIndicator);
 
         Scene scene = new Scene(stackPane);
         dialogStage.setScene(scene);
     }
 
     public void activateProgressBar(final Task<?> task) {
-        pin.progressProperty().bind(task.progressProperty());
+        progressIndicator.progressProperty().bind(task.progressProperty());
         dialogStage.show();
     }
 

@@ -19,42 +19,57 @@ import java.util.Optional;
 
 public class PrimaryController {
 
-    public TextArea pTArea;
-    public StackPane pPrimeBackgrondPane;
-    public Label pStatusLabel;
+    @FXML
+    private TextArea pTArea;
+    @FXML
+    private StackPane pPrimeBackgrondPane;
+    @FXML
+    private Label pStatusLabel;
 
-    public TextArea qTArea;
-    public StackPane qPrimeBackgrondPane;
-    public Label qStatusLabel;
+    @FXML
+    private TextArea qTArea;
+    @FXML
+    private StackPane qPrimeBackgrondPane;
+    @FXML
+    private Label qStatusLabel;
 
-    public TextArea bTArea;
-    public StackPane bPrimeBackgrondPane;
-    public Label bStatusLabel;
+    @FXML
+    private TextArea bTArea;
+    @FXML
+    private StackPane bPrimeBackgrondPane;
+    @FXML
+    private Label bStatusLabel;
 
-    public TextArea nTArea;
+    @FXML
+    private TextArea nTArea;
 
-    public Button fileUploadButton;
+    @FXML
+    private Button fileUploadButton;
+    @FXML
+    private Button encryptButton;
+    @FXML
+    private Button decryptButton;
+    @FXML
+    private Button cancelFileButton;
 
-    public Button encryptButton;
-    public Button decryptButton;
+    @FXML
+    private Label filenameLabel;
+    @FXML
+    private Label blockSizeLabel;
+    @FXML
+    private VBox resultContainer;
 
-    public Label filenameLabel;
-    public Label blockSizeLabel;
-    public Button cancelFileButton;
-    public VBox resultContainer;
+    private final RabinCryptoSystem rabinCryptoSystem;
+    private final PrimeTester primeTester;
+    private File fileInput;
 
     public PrimaryController(PrimeTester primeTester, RabinCryptoSystem rabinCryptoSystem) {
         this.primeTester = primeTester;
         this.rabinCryptoSystem = rabinCryptoSystem;
     }
 
-
-    private final RabinCryptoSystem rabinCryptoSystem;
-    private final PrimeTester primeTester;
-    private File fileInput;
-
     @FXML
-    void initialize() {
+    private void initialize() {
         pTArea.textProperty().addListener((obs, oldVal, newVal) -> {
             processTextAreaChanges(pTArea, newVal);
             calculateN();
@@ -70,8 +85,6 @@ public class PrimaryController {
         fileUploadButton.setOnAction(this::uploadFile);
         cancelFileButton.setOnAction(this::cancelFile);
     }
-
-
 
     private void cancelFile(ActionEvent actionEvent) {
         this.fileInput = null;
@@ -241,10 +254,10 @@ public class PrimaryController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("./"));
         fileChooser.setTitle("Select file");
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Any file (*.*)", "*.*")
-        );
-        return Optional.ofNullable(fileChooser.showSaveDialog(null));
+        fileChooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("Any file (*.*)", "*.*"));
+        File saveFile = fileChooser.showSaveDialog(null);
+        return Optional.ofNullable(saveFile);
     }
 
     private void calculateN() {
@@ -277,9 +290,8 @@ public class PrimaryController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File("./"));
         fileChooser.setTitle("Select file");
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Any file (*.*)", "*.*")
-        );
+        fileChooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("Any file (*.*)", "*.*"));
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             this.fileInput = file;
@@ -294,6 +306,4 @@ public class PrimaryController {
         alert.setContentText(content);
         alert.showAndWait();
     }
-
-
 }
