@@ -1,4 +1,4 @@
-package by.bsuir.m0rk4.it.task.third.primetesting;
+package by.bsuir.m0rk4.it.task.third.data.primetesting;
 
 import by.bsuir.m0rk4.it.task.third.algorithm.Algorithms;
 
@@ -9,7 +9,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import static by.bsuir.m0rk4.it.task.third.algorithm.Algorithms.*;
 
 public class PrimeTester {
-    public boolean test(BigInteger value, int certainty) {
+    public boolean test(BigInteger value) {
+        // temporary
+        int certainty = 10;
+
         if (value.equals(TWO))
             return true;
         if (!value.testBit(0) || value.equals(ONE))

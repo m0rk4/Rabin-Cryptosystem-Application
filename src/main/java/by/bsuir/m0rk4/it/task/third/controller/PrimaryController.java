@@ -1,45 +1,38 @@
 package by.bsuir.m0rk4.it.task.third.controller;
 
-import by.bsuir.m0rk4.it.task.third.crypto.RabinCryptoSystem;
-import by.bsuir.m0rk4.it.task.third.primetesting.PrimeTester;
+import by.bsuir.m0rk4.it.task.third.data.RabinInvalidDataException;
+import by.bsuir.m0rk4.it.task.third.model.AppModel;
 import by.bsuir.m0rk4.it.task.third.uicomponents.ProgressForm;
+import by.bsuir.m0rk4.it.task.third.uicomponents.service.AlertService;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.Property;
 import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class PrimaryController {
 
     @FXML
-    private TextArea pTArea;
+    private CheckBox sampleTestCBox;
     @FXML
-    private StackPane pPrimeBackgrondPane;
-    @FXML
-    private Label pStatusLabel;
+    private TextField sampleTestTField;
 
+    @FXML
+    private TextArea pTArea;
     @FXML
     private TextArea qTArea;
     @FXML
-    private StackPane qPrimeBackgrondPane;
-    @FXML
-    private Label qStatusLabel;
-
-    @FXML
     private TextArea bTArea;
-    @FXML
-    private StackPane bPrimeBackgrondPane;
-    @FXML
-    private Label bStatusLabel;
-
     @FXML
     private TextArea nTArea;
 
@@ -56,29 +49,37 @@ public class PrimaryController {
     private Label filenameLabel;
     @FXML
     private Label blockSizeLabel;
-    @FXML
-    private VBox resultContainer;
 
-    private final RabinCryptoSystem rabinCryptoSystem;
-    private final PrimeTester primeTester;
-    private File fileInput;
+    private final AppModel appModel;
+    private FileChooser fileChooser;
+    private Optional<File> fileInputOptional = Optional.empty();
 
-    public PrimaryController(PrimeTester primeTester, RabinCryptoSystem rabinCryptoSystem) {
-        this.primeTester = primeTester;
-        this.rabinCryptoSystem = rabinCryptoSystem;
+    public PrimaryController(AppModel appModel) {
+        this.appModel = appModel;
     }
 
     @FXML
     private void initialize() {
+        fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File("./"));
+        fileChooser.setTitle("Select file");
+        fileChooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("Any file (*.*)", "*.*"));
+
         pTArea.textProperty().addListener((obs, oldVal, newVal) -> {
-            processTextAreaChanges(pTArea, newVal);
+            processTextInputChanges(pTArea, newVal);
             calculateN();
         });
         qTArea.textProperty().addListener((obs, oldVal, newVal) -> {
-            processTextAreaChanges(qTArea, newVal);
+            processTextInputChanges(qTArea, newVal);
             calculateN();
         });
-        bTArea.textProperty().addListener((obs, oldVal, newVal) -> processTextAreaChanges(bTArea, newVal));
+        bTArea.textProperty().addListener((obs, oldVal, newVal) ->
+                processTextInputChanges(bTArea, newVal));
+
+        sampleTestTField.editableProperty().bind(sampleTestCBox.selectedProperty());
+        sampleTestTField.textProperty().addListener((obs, oldVal, newVal) ->
+                processTextInputChanges(sampleTestTField, newVal));
 
         encryptButton.setOnAction(this::processEncrypt);
         decryptButton.setOnAction(this::processDecrypt);
@@ -87,223 +88,116 @@ public class PrimaryController {
     }
 
     private void cancelFile(ActionEvent actionEvent) {
-        this.fileInput = null;
+        fileInputOptional = Optional.empty();
         filenameLabel.setText("Filename: ");
     }
 
     private void processDecrypt(ActionEvent actionEvent) {
-        String pTAreaText = pTArea.getText();
-        String qTAreaText = qTArea.getText();
-        String bTAreaText = bTArea.getText();
-        boolean pTAreaTextBlank = pTAreaText.isBlank();
-        boolean qTAreaTextBlank = qTAreaText.isBlank();
-        boolean bTAreaTextBlank = bTAreaText.isBlank();
-        if (pTAreaTextBlank || qTAreaTextBlank || bTAreaTextBlank) {
-            showAlert("Empty value",
-                    (pTAreaTextBlank ? "p is empty.\n" : "") +
-                            (qTAreaTextBlank ? "q is empty.\n" : "") +
-                            (bTAreaTextBlank ? "b is empty.\n" : "")
-            );
-            return;
-        }
+        String pText = pTArea.getText();
+        String qText = qTArea.getText();
+        String bText = bTArea.getText();
 
-        BigInteger p = new BigInteger(pTAreaText);
-        BigInteger q = new BigInteger(qTAreaText);
-        boolean pTest = primeTester.test(p, 10);
-        boolean qTest = primeTester.test(q, 10);
-        if (!pTest || !qTest) {
-            showAlert("Prime test failed",
-                    (!pTest ? "p failed prime test.\n" : "") +
-                            (!qTest ? "q failed prime test.\n" : "")
-            );
-            return;
-        }
-
-        boolean pTestRemainder = primeTester.testRemainderMod4(p);
-        boolean qTestRemainder = primeTester.testRemainderMod4(q);
-        if (!pTestRemainder || !qTestRemainder) {
-            showAlert("Rabin x mod 4 = 3 failed",
-                    (!pTestRemainder ? "p failed Rabin necessity.\n" : "") +
-                            (!qTestRemainder ? "q failed Rabin necessity.\n" : "")
-            );
-            return;
-        }
-        BigInteger n = p.multiply(q);
-        if (n.compareTo(BigInteger.valueOf(255)) != 1) {
-            showAlert("N range", "Impossible to get unique message!\nCrypto-level is low!");
-            return;
-        }
-        BigInteger b = new BigInteger(bTAreaText);
-        if (b.compareTo(n) > -1) {
-            showAlert("Out of n",
-                    "b value is >= n.");
-            return;
-        }
-
-        if (fileInput == null) {
-            showAlert("File not found",
-                    "File wasn't specified.");
-            return;
-        }
-
-        Optional<File> fileSaveOpt = saveFile();
-        if (fileSaveOpt.isPresent()) {
-            File fileOutput = fileSaveOpt.get();
-            Task<List<String>> encryptTask = rabinCryptoSystem.decrypt(this.fileInput, fileOutput, b, n, p, q);
-            ProgressForm pForm = new ProgressForm();
-            encryptTask.setOnSucceeded(event -> {
-                Worker<List<String>> source = event.getSource();
-                List<String> value = source.getValue();
-
-                resultContainer.getChildren().clear();
-                value.forEach(v -> resultContainer.getChildren().add(new TextField(v)));
-
-                encryptButton.setDisable(false);
-                decryptButton.setDisable(false);
-                pForm.getDialogStage().close();
-            });
-            encryptButton.setDisable(true);
-            decryptButton.setDisable(true);
-            pForm.activateProgressBar(encryptTask);
-            Thread thread = new Thread(encryptTask);
-            thread.start();
+        try {
+            appModel.validate(pText, qText, bText);
+        } catch (RabinInvalidDataException e) {
+            AlertService.showAlert(Alert.AlertType.ERROR, "Validation Error", "Message", e.getMessage());
         }
     }
 
     private void processEncrypt(ActionEvent actionEvent) {
-        String pTAreaText = pTArea.getText();
-        String qTAreaText = qTArea.getText();
-        String bTAreaText = bTArea.getText();
-        boolean pTAreaTextBlank = pTAreaText.isBlank();
-        boolean qTAreaTextBlank = qTAreaText.isBlank();
-        boolean bTAreaTextBlank = bTAreaText.isBlank();
-        if (pTAreaTextBlank || qTAreaTextBlank || bTAreaTextBlank) {
-            showAlert("Empty value",
-                    (pTAreaTextBlank ? "p is empty.\n" : "") +
-                            (qTAreaTextBlank ? "q is empty.\n" : "") +
-                            (bTAreaTextBlank ? "b is empty.\n" : "")
-            );
+        String pText = pTArea.getText();
+        String qText = qTArea.getText();
+        String bText = bTArea.getText();
+
+        BigInteger p;
+        BigInteger q;
+        BigInteger b;
+        try {
+            appModel.validate(pText, qText, bText);
+            p = new BigInteger(pText);
+            q = new BigInteger(qText);
+            b = new BigInteger(bText);
+        } catch (RabinInvalidDataException e) {
+            AlertService.showAlert(Alert.AlertType.ERROR, "Validation Error", "Message", e.getMessage());
             return;
         }
 
-        BigInteger p = new BigInteger(pTAreaText);
-        BigInteger q = new BigInteger(qTAreaText);
-        boolean pTest = primeTester.test(p, 10);
-        boolean qTest = primeTester.test(q, 10);
-        if (!pTest || !qTest) {
-            showAlert("Prime test failed",
-                    (!pTest ? "p failed prime test.\n" : "") +
-                            (!qTest ? "q failed prime test.\n" : "")
-            );
-            return;
-        }
 
-        boolean pTestRemainder = primeTester.testRemainderMod4(p);
-        boolean qTestRemainder = primeTester.testRemainderMod4(q);
-        if (!pTestRemainder || !qTestRemainder) {
-            showAlert("Rabin x mod 4 = 3 failed",
-                    (!pTestRemainder ? "p failed Rabin necessity.\n" : "") +
-                            (!qTestRemainder ? "q failed Rabin necessity.\n" : "")
-            );
-            return;
-        }
+        if (sampleTestCBox.isSelected()) {
 
-        BigInteger n = p.multiply(q);
-        if (n.compareTo(BigInteger.valueOf(255)) != 1) {
-            showAlert("N range", "Impossible to get unique message!\nCrypto-level is low!");
-            return;
-        }
-        BigInteger b = new BigInteger(bTAreaText);
-        if (b.compareTo(n) > -1) {
-            showAlert("Out of n",
-                    "b value is >= n.");
-            return;
-        }
+        } else {
+            if (fileInputOptional.isEmpty()) {
+                AlertService.showAlert(Alert.AlertType.ERROR, "File Error", "Message", "No input file found.");
+                return;
+            }
+            Optional<File> fileSaveOptional = saveFile();
+            if (fileSaveOptional.isPresent()) {
+                File fileInput = fileInputOptional.get();
+                File fileOutput = fileSaveOptional.get();
 
-        if (fileInput == null) {
-            showAlert("File not found",
-                    "File wasn't specified.");
-            return;
-        }
-
-        Optional<File> fileSaveOpt = saveFile();
-        if (fileSaveOpt.isPresent()) {
-            File fileOutput = fileSaveOpt.get();
-            Task<List<String>> encryptTask = rabinCryptoSystem.encrypt(this.fileInput, fileOutput, b, n);
-            ProgressForm pForm = new ProgressForm();
-            encryptTask.setOnSucceeded(event -> {
-                Worker<List<String>> source = event.getSource();
-                List<String> value = source.getValue();
-
-                resultContainer.getChildren().clear();
-                value.forEach(v -> resultContainer.getChildren().add(new TextField(v)));
-
-                encryptButton.setDisable(false);
-                decryptButton.setDisable(false);
-                pForm.getDialogStage().close();
-            });
-            encryptButton.setDisable(true);
-            decryptButton.setDisable(true);
-            pForm.activateProgressBar(encryptTask);
-            Thread thread = new Thread(encryptTask);
-            thread.start();
+                BigInteger n = p.multiply(q);
+                runTask(() -> appModel.encryptFile(fileInput, fileOutput, b, n));
+            }
         }
     }
 
-    private Optional<File> saveFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("./"));
-        fileChooser.setTitle("Select file");
-        fileChooser.getExtensionFilters()
-                .add(new FileChooser.ExtensionFilter("Any file (*.*)", "*.*"));
-        File saveFile = fileChooser.showSaveDialog(null);
-        return Optional.ofNullable(saveFile);
+    private void runTask(Supplier<Task<List<String>>> taskSupplier) {
+        Task<List<String>> task = taskSupplier.get();
+        ProgressForm pForm = new ProgressForm();
+        task.setOnSucceeded(event -> {
+            Worker<List<String>> source = event.getSource();
+            List<String> value = source.getValue();
+            updateResults(value);
+
+            encryptButton.setDisable(false);
+            decryptButton.setDisable(false);
+            pForm.getDialogStage().close();
+        });
+        encryptButton.setDisable(true);
+        decryptButton.setDisable(true);
+        pForm.activateProgressBar(task);
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    private void updateResults(List<String> value) {
+
     }
 
     private void calculateN() {
         String pText = pTArea.getText();
         if (pText.isBlank()) {
-            nTArea.setText("");
+            nTArea.clear();
             blockSizeLabel.setText("Block Size: ");
             return;
         }
         String qText = qTArea.getText();
         if (qText.isBlank()) {
-            nTArea.setText("");
+            nTArea.clear();
             blockSizeLabel.setText("Block Size: ");
             return;
         }
         BigInteger p = new BigInteger(pText);
         BigInteger q = new BigInteger(qText);
         BigInteger n = p.multiply(q);
-        nTArea.setText(n.toString());
+        String nStr = n.toString();
+        nTArea.setText(nStr);
         int length = n.toByteArray().length;
-        blockSizeLabel.setText("Block Size: " + (++length));
+        blockSizeLabel.setText("Block Size: " + (length - 1));
     }
 
-    private void processTextAreaChanges(TextArea textArea, String newVal) {
+    private void processTextInputChanges(TextInputControl textInputControl, String newVal) {
         String filteredVal = newVal.replaceAll("[^\\d]+", "");
-        textArea.setText(filteredVal);
+        textInputControl.setText(filteredVal);
+    }
+
+    private Optional<File> saveFile() {
+        File saveFile = fileChooser.showSaveDialog(null);
+        return Optional.ofNullable(saveFile);
     }
 
     private void uploadFile(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("./"));
-        fileChooser.setTitle("Select file");
-        fileChooser.getExtensionFilters()
-                .add(new FileChooser.ExtensionFilter("Any file (*.*)", "*.*"));
         File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            this.fileInput = file;
-            filenameLabel.setText("Filename: " + file.getName());
-        }
-    }
-
-    private void showAlert(String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
+        fileInputOptional = Optional.ofNullable(file);
     }
 }

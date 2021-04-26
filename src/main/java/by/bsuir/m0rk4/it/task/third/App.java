@@ -2,7 +2,10 @@ package by.bsuir.m0rk4.it.task.third;
 
 import by.bsuir.m0rk4.it.task.third.controller.PrimaryController;
 import by.bsuir.m0rk4.it.task.third.crypto.RabinCryptoSystem;
-import by.bsuir.m0rk4.it.task.third.primetesting.PrimeTester;
+import by.bsuir.m0rk4.it.task.third.crypto.RabinProcessor;
+import by.bsuir.m0rk4.it.task.third.data.parser.RabinDataParser;
+import by.bsuir.m0rk4.it.task.third.data.primetesting.PrimeTester;
+import by.bsuir.m0rk4.it.task.third.model.AppModel;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,9 +25,14 @@ public class App extends Application {
         URL appViewUrl = App.class.getResource(VIEW_NAME);
         FXMLLoader fxmlLoader = new FXMLLoader(appViewUrl);
 
-        RabinCryptoSystem rabinCryptoSystem = new RabinCryptoSystem();
+
         PrimeTester primeTester = new PrimeTester();
-        PrimaryController primaryController = new PrimaryController(primeTester, rabinCryptoSystem);
+        RabinDataParser rabinDataParser = new RabinDataParser();
+        RabinCryptoSystem rabinCryptoSystem = new RabinCryptoSystem();
+        RabinProcessor rabinProcessor = new RabinProcessor(rabinCryptoSystem);
+        AppModel appModel = new AppModel(primeTester, rabinDataParser, rabinCryptoSystem, rabinProcessor);
+
+        PrimaryController primaryController = new PrimaryController(appModel);
         fxmlLoader.setControllerFactory(c -> primaryController);
 
         Parent root = fxmlLoader.load();

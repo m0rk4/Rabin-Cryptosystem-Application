@@ -10,6 +10,8 @@ import javafx.stage.StageStyle;
 
 public class ProgressForm {
 
+    private static final String PROGRESS_FORM_TITLE = "Processing...";
+
     private final Stage dialogStage;
     private final ProgressIndicator progressIndicator;
 
@@ -18,7 +20,7 @@ public class ProgressForm {
         dialogStage.initStyle(StageStyle.DECORATED);
         dialogStage.setResizable(false);
         dialogStage.initModality(Modality.APPLICATION_MODAL);
-        dialogStage.setTitle("Processing...");
+        dialogStage.setTitle(PROGRESS_FORM_TITLE);
 
         progressIndicator = new ProgressIndicator();
         progressIndicator.setMinWidth(400);

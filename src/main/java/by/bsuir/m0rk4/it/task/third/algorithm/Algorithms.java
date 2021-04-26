@@ -1,6 +1,6 @@
 package by.bsuir.m0rk4.it.task.third.algorithm;
 
-import by.bsuir.m0rk4.it.task.third.model.ExtGcdResult;
+import by.bsuir.m0rk4.it.task.third.entity.ExtGcdResult;
 
 import java.math.BigInteger;
 
