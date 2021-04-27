@@ -9,7 +9,7 @@ import static by.bsuir.m0rk4.it.task.third.algorithm.Algorithms.*;
 
 public class RabinCryptoSystem {
 
-    public BigInteger encryptNumber(BigInteger m, BigInteger b, BigInteger n) {
+    public BigInteger getEncryptedMessage(BigInteger m, BigInteger b, BigInteger n) {
         BigInteger mPlusB = m.add(b).mod(n);
         BigInteger mMultVal = m.multiply(mPlusB);
         return mMultVal.mod(n);

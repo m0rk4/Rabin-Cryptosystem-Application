@@ -1,6 +1,6 @@
 package by.bsuir.m0rk4.it.task.third.data.parser;
 
-import by.bsuir.m0rk4.it.task.third.data.RabinInvalidDataException;
+import by.bsuir.m0rk4.it.task.third.data.exception.RabinInvalidDataException;
 
 import java.math.BigInteger;
 

@@ -2,7 +2,10 @@ package by.bsuir.m0rk4.it.task.third;
 
 import by.bsuir.m0rk4.it.task.third.controller.PrimaryController;
 import by.bsuir.m0rk4.it.task.third.crypto.RabinCryptoSystem;
-import by.bsuir.m0rk4.it.task.third.crypto.RabinProcessor;
+import by.bsuir.m0rk4.it.task.third.crypto.RabinFileProcessor;
+import by.bsuir.m0rk4.it.task.third.crypto.RabinNumberProcessor;
+import by.bsuir.m0rk4.it.task.third.data.RabinFileSourceDataValidator;
+import by.bsuir.m0rk4.it.task.third.data.RabinNumSourceDataValidator;
 import by.bsuir.m0rk4.it.task.third.data.parser.RabinDataParser;
 import by.bsuir.m0rk4.it.task.third.data.primetesting.PrimeTester;
 import by.bsuir.m0rk4.it.task.third.model.AppModel;
@@ -25,14 +28,21 @@ public class App extends Application {
         URL appViewUrl = App.class.getResource(VIEW_NAME);
         FXMLLoader fxmlLoader = new FXMLLoader(appViewUrl);
 
-
         PrimeTester primeTester = new PrimeTester();
         RabinDataParser rabinDataParser = new RabinDataParser();
         RabinCryptoSystem rabinCryptoSystem = new RabinCryptoSystem();
-        RabinProcessor rabinProcessor = new RabinProcessor(rabinCryptoSystem);
-        AppModel appModel = new AppModel(primeTester, rabinDataParser, rabinCryptoSystem, rabinProcessor);
 
-        PrimaryController primaryController = new PrimaryController(appModel);
+        RabinFileProcessor rabinFileProcessor = new RabinFileProcessor(rabinCryptoSystem);
+        RabinNumberProcessor rabinNumberProcessor = new RabinNumberProcessor(rabinCryptoSystem);
+
+        RabinNumSourceDataValidator rabinNumSourceDataValidator =
+                new RabinNumSourceDataValidator(rabinDataParser, primeTester);
+        RabinFileSourceDataValidator rabinFileSourceDataValidator =
+                new RabinFileSourceDataValidator(rabinDataParser, primeTester);
+        AppModel appModel = new AppModel(rabinFileSourceDataValidator, rabinNumSourceDataValidator,
+                rabinFileProcessor, rabinNumberProcessor);
+
+        PrimaryController primaryController = new PrimaryController(stage, appModel);
         fxmlLoader.setControllerFactory(c -> primaryController);
 
         Parent root = fxmlLoader.load();
