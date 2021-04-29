@@ -35,8 +35,9 @@ public class RabinFileProcessor {
                 BUFFER_OUTPUT.clear();
                 resultBuilder.reset();
 
-                int modBytesCount = module.toByteArray().length;
-                int readBytesCount = modBytesCount - 1;
+                byte[] bytes = module.toByteArray();
+                int modBytesCount = bytes.length;
+                int readBytesCount = modBytesCount - 1 - (bytes[0] == 0 ? 1 : 0);
                 List<ResultModel> results = new ArrayList<>(10);
                 try (
                         RandomAccessFile rafInput = new RandomAccessFile(fileInput, "r");
@@ -69,7 +70,7 @@ public class RabinFileProcessor {
                     }
                     if (BUFFER_INPUT.position() != 0) {
                         BUFFER_INPUT.flip();
-                        int i = 0;
+                        int i = 1;
                         for (int zerosCount = readBytesCount - BUFFER_INPUT.limit(); zerosCount > 0; zerosCount--)
                             messageHolder[i++] = 0;
                         BUFFER_INPUT.get(messageHolder, i, BUFFER_INPUT.limit());
@@ -147,9 +148,10 @@ public class RabinFileProcessor {
                 BUFFER_OUTPUT.clear();
                 resultBuilder.reset();
 
-                int modBytesCount = module.toByteArray().length;
+                byte[] bytes = module.toByteArray();
+                int modBytesCount = bytes.length;
                 int readBlockSize = modBytesCount + 1;
-                long totalRead = 0, maxToWrite = modBytesCount - 1;
+                long totalRead = 0, maxToWrite = modBytesCount - 1 - (bytes[0] == 0 ? 1 : 0);
                 long length = fileInput.length();
                 List<ResultModel> results = new ArrayList<>(10);
                 try (
@@ -178,7 +180,7 @@ public class RabinFileProcessor {
                             currBlocks++;
                             isLastBlock = currBlocks == blocksTotalCount;
 
-                            BUFFER_INPUT.get(encryptedMessageHolder, 0, readBlockSize);
+                            BUFFER_INPUT.get(encryptedMessageHolder);
                             byte metaInfo = encryptedMessageHolder[readBlockSize - 1];
 
                             int jacobi = (metaInfo >> 1) & 1;
@@ -221,7 +223,7 @@ public class RabinFileProcessor {
                                             BUFFER_OUTPUT.put((byte) 0);
                                         BUFFER_OUTPUT.put(decryptedBytes);
                                     } else {
-                                        BUFFER_OUTPUT.put(decryptedBytes, 0, (int) left);
+                                        BUFFER_OUTPUT.put(decryptedBytes, 1, (int) left);
                                     }
                                 } else {
                                     for (long l = maxToWrite - decryptedLen; l > 0; l--)

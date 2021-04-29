@@ -33,11 +33,11 @@ public class RabinCryptoSystem {
         BigInteger mP = binPow(discriminant, pPow, p);
         BigInteger mQ = binPow(discriminant, qPow, q);
 
-        if (!(mP.multiply(mP).mod(p)).equals(discriminant.mod(p))
-                || !(mQ.multiply(mQ).mod(q)).equals(discriminant.mod(q))) {
-            System.out.println("Failed check p");
-            System.exit(1);
-        }
+//        if (!(mP.multiply(mP).mod(p)).equals(discriminant.mod(p))
+//                || !(mQ.multiply(mQ).mod(q)).equals(discriminant.mod(q))) {
+//            System.out.println("Failed check p");
+//            System.exit(1);
+//        }
 
         ExtGcdResult extGcdResult = extGcd(p, q);
         BigInteger t1 = extGcdResult.getX1().multiply(p).mod(n).multiply(mQ).mod(n);
